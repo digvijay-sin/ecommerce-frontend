@@ -1,0 +1,32 @@
+.input-icon-container {
+    border: none;    
+    width: 100%;
+    color: #ec3232;
+    position: relative;
+}
+
+  .search-input {
+    padding-right: 20%; 
+    border-radius: 10px;      
+  }
+
+  .search-input:focus {
+    box-shadow: none; 
+  } 
+  
+  .search-icon {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%); 
+    color: #aaa; 
+  }
+
+  .nav-dropdown-item {          
+    display: flex;
+    align-items: center; 
+  }
+  
+  .nav-dropdown-item .icon {
+    margin-right: 8px; 
+  }

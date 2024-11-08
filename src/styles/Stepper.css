@@ -1,0 +1,26 @@
+
+.stepper-navigation {
+    width: 62vw;
+    margin-top: 30px;   
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.stepper-navigation-container{
+    display: flex;
+    justify-content: center;
+}
+
+.stepper-container{
+    margin:3rem;
+}
+
+.border{
+    border: 1px solid;
+    padding: 10px;
+}
+
+/* .stepper-transition{
+    transition: ;
+} */
