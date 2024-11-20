@@ -2,21 +2,20 @@ import React, { useContext, useState } from 'react';
 import { Stepper } from 'react-form-stepper';
 import "../../styles/Stepper.css";
 import Button from 'react-bootstrap/Button';
-import { EmailAndGst } from './RegisterStepper';
-import { PasswordCreation } from './RegisterStepper';
-import { OnboardingDashboard } from './RegisterStepper';
+import  EmailAndGst  from './EmailAndGst';
+import  PasswordCreation  from './PasswordCreation';
+import  OnboardingDashboard  from './OnboardingDashboard';
 import * as formik from 'formik';
 import * as yup from 'yup';
 import { useFormikContext } from "formik";
 import Form from 'react-bootstrap/Form';
 
 
-const CustomStepper = () => {
-    
+const CustomStepper = () => {    
 
     const { Formik } = formik;
 
-    const [activeStep, setActiveStep] = useState(0);
+    const [activeStep, setActiveStep] = useState(0);    
 
     const handlePrevious = () => { setActiveStep(Math.max(activeStep - 1, 0)) }
 
@@ -35,9 +34,12 @@ const CustomStepper = () => {
 
     const validationSchemas = [
         yup.object({
-            mobileNumber: yup.string().required("Mobile Number is required").matches(/^[0-9]{10}$/, "Mobile number must be 10 digits"),
+            mobileNumber: yup.string().required("Mobile Number is required")
+                .transform((value) => value.replace(/^(\+[0-9]{1,3})\s?/, '')) 
+                .matches(/^[0-9]{8,15}$/, 'Invalid Mobile Number'),
+                
             emailID: yup.string().required("Email is required").email("Invalid Email Format"),
-            GSTINNumber: yup.string().required("GSTIN is required to sell products on this application"),
+            GSTIN: yup.string().required("GSTIN is required to sell products on this application"),
             terms: yup.bool().required().oneOf([true], 'Terms must be accepted'),
         }),
         yup.object({
@@ -109,12 +111,12 @@ const CustomStepper = () => {
                         validateOnMount={false}    
                         // validationSchema = {undefined}                    
                     >
-                        {({ validateForm, setTouched, values, handleChange, handleBlur, touched, errors, setFieldTouched, validateField, isValid, dirty  }) => (
-                            <Form noValidate>
+                        {({ validateForm, setTouched, values, handleChange, handleBlur, touched, errors, setFieldTouched, validateField, isValid, dirty, setFieldValue  }) => (
+                            <Form noValidate >
                                 {React.cloneElement(stepForms[activeStep], {
                                     validateForm,
                                     setTouched,
-                                    values, handleChange, handleBlur, touched, errors, setFieldTouched, validateField, isValid, dirty
+                                    values, handleChange, handleBlur, touched, errors, setFieldTouched, validateField, isValid, dirty, setFieldValue
                                 })}
                                 <div className='stepper-navigation-container'>
                                     <div className='stepper-navigation'>

@@ -24,3 +24,78 @@
 /* .stepper-transition{
     transition: ;
 } */
+
+
+.form-container{
+    width: 50vw;
+}
+
+.form-parent{
+    display: flex;
+    justify-content: center;
+    row-gap: 2rem;
+}
+
+.mobile-container{
+    border: 1px solid #cbcbcb;
+    display: flex;
+    align-items: center;    
+    border-radius: 5px;
+}
+
+
+
+.send-otp{
+    padding: 5px;
+    color: blue;    
+}
+
+.send-otp > a {
+    text-decoration: none;
+}
+
+.send-otp > a:hover {
+    cursor: pointer;
+}   
+
+a.unclickable {
+    pointer-events: none;
+    color: #7CB9E8; 
+}
+
+
+
+#validationFormik01:focus{    
+    box-shadow: none;
+}
+
+#validationFormik02:focus{    
+    box-shadow: none;
+}
+
+#validationFormik03:focus{    
+    box-shadow: none;
+}
+
+.otp-container{
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
+
+
+.spinner{
+    animation: rotate 1s linear infinite;
+  }
+  
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  
