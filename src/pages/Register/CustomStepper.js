@@ -9,6 +9,10 @@ import * as formik from 'formik';
 import * as yup from 'yup';
 import { useFormikContext } from "formik";
 import Form from 'react-bootstrap/Form';
+import { auth } from '../../utils/firebase.config';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 
 const CustomStepper = () => {    
@@ -19,10 +23,21 @@ const CustomStepper = () => {
 
     const handlePrevious = () => { setActiveStep(Math.max(activeStep - 1, 0)) }
 
-    const handleNext = async (validateForm, isValid, dirty) => {
+    const handleNext = async (validateForm, isValid, dirty, values) => {
         const errors = await validateForm();
         if(Object.keys(errors).length === 0 && isValid && dirty){
-            setActiveStep(activeStep + 1);
+            if(activeStep === 1){
+                const {emailID, createPassword} = values;
+                try {
+                    await createUserWithEmailAndPassword(auth, emailID, createPassword);
+                    toast.success("Successfully Registered")
+                    console.log(auth.currentUser);
+                    
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+            setActiveStep(activeStep + 1);  
         }
     }
 
@@ -50,8 +65,10 @@ const CustomStepper = () => {
         yup.object({})
     ]
 
+    
+
     const steps = [
-        { label: "Email ID A& GST"},
+        { label: "Email ID & GST"},
         { label: "Password Creation" },
         { label: "Onboarding Dashboard"}
     ];
@@ -82,6 +99,7 @@ const CustomStepper = () => {
 
     return (
         <div className='stepper-container'>
+            <Toaster toastOptions={{ duration: 4000 }} />
             <div >
                 <Stepper
                     steps={steps}
@@ -120,8 +138,8 @@ const CustomStepper = () => {
                                 })}
                                 <div className='stepper-navigation-container'>
                                     <div className='stepper-navigation'>
-                                        <Button variant='secondary' disabled={activeStep === 0} onClick={() => handlePrevious()}>Back</Button>
-                                        <Button variant={activeStep === steps.length ? 'info text-white' : 'primary'} disabled={!isValid || !dirty } onClick={() => handleNext(validateForm, isValid, dirty)}>  {activeStep === steps.length - 1 ? 'Submit' : 'Next'}</Button>
+                                        <Button variant='secondary' hidden={activeStep === 0} disabled={!isValid || !dirty } onClick={() => handlePrevious()}>Back</Button>
+                                        <Button variant={activeStep === steps.length ? 'info text-white' : 'primary'} disabled={!isValid || !dirty } onClick={() => handleNext(validateForm, isValid, dirty, values)}>  {activeStep === steps.length - 1 ? 'Submit' : 'Next'}</Button>
                                     </div>
                                 </div>
                             </Form>

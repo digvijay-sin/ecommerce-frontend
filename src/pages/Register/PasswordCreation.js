@@ -80,9 +80,9 @@ const PasswordCreation = ({ setFieldValue, validateForm, setTouched, values, han
                                         name="displayName"
                                         value={values.displayName}
                                         onBlur={() => {
-                                            setFieldTouched("displayName", true);
-                                            validateField("displayName")
-                                        }
+                                                setFieldTouched("displayName", true);
+                                                validateField("displayName")
+                                            }
                                         }
                                         onChange={handleChange}
                                         feedback={errors.displayName}

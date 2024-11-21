@@ -11,9 +11,9 @@ import '../styles/Login.css';
 import toast, { Toaster } from 'react-hot-toast';
 import { OtpInput } from 'reactjs-otp-input';
 import { CgSpinner } from 'react-icons/cg';
-import {auth}  from "../utils/firebase.config";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import {SignInLinkToEmail} from "firebase/auth";
+import { auth } from "../utils/firebase.config";
+import { RecaptchaVerifier, signInWithEmailAndPassword, signInWithPhoneNumber } from "firebase/auth";
+import { SignInLinkToEmail } from "firebase/auth";
 
 
 const Login = () => {
@@ -23,24 +23,32 @@ const Login = () => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [ph, setPh] = useState('');
 
+
     const [otp, setOtp] = useState('');
     const [user, setUser] = useState(null);
 
-    const [showOtp, setShowOtp] = useState(false)
-    const [loading, setLoading] = useState(false)
+    const [showOtp, setShowOtp] = useState(false);
+    const [loading, setLoading] = useState(false);
 
-    
+    const [emailID, setEmailID] = useState('');
+    const [password, setPassword] = useState('');
 
-    const handleSubmit = (event) => {
+    const [emailEntered, setEmailEntered] = useState(false);
+
+
+    const handleSubmit = async (event) => {
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.preventDefault();
             event.stopPropagation();
         }
+        await signInWithEmailAndPassword(auth, emailID, password)
+        window.location.href= "/sellerDashboard";
+        console.log("signed In")
         setValidated(true);
     };
 
-   
+
     const handleToggle = () => {
         setUseEmail(!useEmail);
     }
@@ -55,7 +63,7 @@ const Login = () => {
     //                     onSignup();
     //                 },
     //                 "expired-callback": () => {
- 
+
     //                 },
     //             },
     //             auth
@@ -69,7 +77,7 @@ const Login = () => {
     //     onCaptchaVerify();
 
     //     const appVerifier = window.RecaptchaVerifier;
-        
+
     //     signInWithPhoneNumber(auth, ph, appVerifier)
     //         .then((confirmationResult) => {
     //             window.confirmationResult = confirmationResult;
@@ -84,26 +92,29 @@ const Login = () => {
 
     const sendOtp = async () => {
 
-        try{
+        try {
             const recaptcha = new RecaptchaVerifier(auth, "recaptcha-container", {});
-            const formatPh =  "+" + ph;
+            const formatPh = "+" + ph;
             console.log(formatPh)
-            const confirmation  = await signInWithPhoneNumber(auth, formatPh, recaptcha);
+            const confirmation = await signInWithPhoneNumber(auth, formatPh, recaptcha);
             setUser(confirmation);
             console.log(confirmation);
-        }catch(err){
+        } catch (err) {
             console.log(err);
-        }       
+        }
+
     }
 
     const verifyOtp = async () => {
-        try{
+        try {
             const data = await user.confirm(otp);
             console.log(data);
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
-    }   
+    }
+
+
 
     // function onOTPVerify(){
     //     setLoading(true);
@@ -123,7 +134,7 @@ const Login = () => {
         <>
             <div className='d-flex justify-content-center align-items-center min-vh-100"'>
                 <Toaster toastOptions={{ duration: 4000 }} />
-                
+
                 <div className='m-3 w-50 w-md-50'>
                     <div className="heading">
                         <h3>Log in for the best experience</h3>
@@ -132,16 +143,46 @@ const Login = () => {
                     <div >
                         <Form noValidate validated={validated} onSubmit={handleSubmit}>
                             <div>
-                                <InputGroup hasValidation>
-                                    {useEmail ? (<Form.Control
-                                        className="custom-input"
-                                        type={useEmail ? "email" : "text"}
-                                        required
-                                        isInvalid={validated && !ph}
-                                        placeholder={useEmail ? "Email-ID" : "Phone Number"}
-                                        value={ph}
-                                        onChange={(e) => setPh(e.target.value)}
-                                    />) : (<PhoneInput
+
+                                {useEmail ?
+                                    !emailEntered ? (
+                                        <>
+                                            <Form.Group controlId='emailID'>
+                                                <InputGroup hasValidation>
+                                                    <Form.Control
+                                                        className="custom-input"
+                                                        type="email"
+                                                        required
+                                                        isInvalid={validated && !emailID}
+                                                        // placeholder={useEmail ? "Email-ID" : "Phone Number"}
+                                                        placeholder="Enter Email-ID"
+                                                        value={emailID}
+                                                        onChange={(e) => setEmailID(e.target.value)}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        Please Enter Email.
+                                                    </Form.Control.Feedback>
+                                                </InputGroup>
+                                            </Form.Group>
+                                        </>) : (<>
+                                            <Form.Group controlId='emailID'>
+                                                <InputGroup hasValidation>
+                                                    <Form.Control
+                                                        className="custom-input"
+                                                        type="password"
+                                                        required
+                                                        isInvalid={validated && !password}
+                                                        placeholder="Enter Password"
+                                                        value={password}
+                                                        onChange={(e) => setPassword(e.target.value)}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        Please Enter Password.
+                                                    </Form.Control.Feedback>
+                                                </InputGroup>
+                                            </Form.Group>
+                                        </>)
+                                    : (<PhoneInput
                                         country={'in'}
                                         value={ph}
                                         // name="mobileNumber"
@@ -154,13 +195,9 @@ const Login = () => {
                                         isInvalid={validated && !ph}
                                         placeholder='Enter Mobile Number'
 
-                                    />)}
+                                    />)
+                                }
 
-
-                                    <Form.Control.Feedback type="invalid">
-                                        {useEmail ? 'Please enter a valid email' : 'Please enter a valid phone number'}
-                                    </Form.Control.Feedback>
-                                </InputGroup>
                                 {showOtp && (
                                     <div className='otp-container'>
                                         <h6>Enter Your OTP</h6>
@@ -170,7 +207,7 @@ const Login = () => {
                                             numInputs={6}
                                             inputStyle={{
                                                 width: 40,
-                                                height: 40,                                               
+                                                height: 40,
                                                 fontSize: 18,
                                                 textAlign: 'center',
                                                 marginRight: 10,
@@ -185,27 +222,31 @@ const Login = () => {
                                     </div>
                                 )}
                             </div>
+                            <div>
+                                <Link onClick={handleToggle} className='text-decoration-none d-flex justify-content-end'>
+                                    {useEmail ? "Use Phone number" : "Use Email-ID"}
+                                </Link>
+                            </div>
+                            {useEmail ? emailEntered ? 
+                                (<Button onClick={handleSubmit} className="w-100">Submit</Button>) :
+                                (<Button onClick={() => setEmailEntered(true)} className="w-100">Next</Button>)
+                                :
+                                (<Button
+                                    onClick={sendOtp}
+                                    variant="primary"
+                                    className="mt-3 w-100 text-white mb-5">
+                                    {loading && <CgSpinner size={25} className="spinner me-2" />}
+                                    <span>Request OTP</span>
+                                </Button>
+                                )
+                            }
                         </Form>
                     </div>
-                    <div>
-                        <Link onClick={handleToggle} className='text-decoration-none d-flex justify-content-end'>
-                            {useEmail ? "Use Phone number" : "Use Email-ID"}
-                        </Link>
-                    </div>
-                    {  useEmail ? (<Button className="w-100">SignIn through Email</Button>) :
-                        (<Button 
-                            onClick={sendOtp} 
-                            variant="primary" 
-                            className="mt-3 w-100 text-white mb-5">
-                            {loading && <CgSpinner size={25} className="spinner me-2" />}
-                            <span>Request OTP</span>
-                        </Button>)
-                    }
-                    
+
 
                     <p>By continuing, you agree to Flipkart's <mark>Terms of Use</mark> and <mark>Privacy Policy</mark></p>
-                </div>
-            </div>
+                </div >
+            </div >
             <div id="recaptcha-container"></div>
         </>
     )
