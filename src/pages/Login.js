@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState  } from 'react';
+import {useAuthState} from "react-firebase-hooks/auth";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import * as formik from 'formik';
 import * as yup from 'yup';
 import PhoneInput from 'react-phone-input-2'
@@ -13,15 +14,21 @@ import { OtpInput } from 'reactjs-otp-input';
 import { CgSpinner } from 'react-icons/cg';
 import { auth } from "../utils/firebase.config";
 import { RecaptchaVerifier, signInWithEmailAndPassword, signInWithPhoneNumber } from "firebase/auth";
-import { SignInLinkToEmail } from "firebase/auth";
+import {sendSignInLinkToEmail, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 
 
 const Login = () => {
+    
+    const navigate = useNavigate();
+    const location = useLocation();
+    const {search} = location;
+    const [userData] = useAuthState(auth);
 
     const [validated, setValidated] = useState(false);
     const [useEmail, setUseEmail] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [ph, setPh] = useState('');
+
 
 
     const [otp, setOtp] = useState('');
@@ -35,8 +42,12 @@ const Login = () => {
 
     const [emailEntered, setEmailEntered] = useState(false);
 
+    const [infoMsg, setInfoMsg] = useState();
 
-    const handleSubmit = async (event) => {
+    const [signInWithLink, setSignIniWithLink] = useState(false);
+
+
+    const handleLogin = async (event) => {
         const form = event.currentTarget;
         if (form.checkValidity() === false) {
             event.preventDefault();
@@ -48,6 +59,42 @@ const Login = () => {
         setValidated(true);
     };
 
+    const passwordlessSignIn = async(event) => {
+        // const form = event.currentTarget;
+        // if(form.checkValidity() === false){
+        //     event.preventDefault();
+        //     event.stopPropagation();
+        // }
+        await sendSignInLinkToEmail(auth, emailID, {
+            url : "http://localhost:3000/Login",
+            handleCodeInApp: true
+        }).then((result) => {
+            console.log(result.user)
+            localStorage.setItem('email', emailID);
+            setInfoMsg("We have sent you an email with a link to  sign in");
+        }).catch(err => {
+            alert(err);
+        });
+    }
+
+    useEffect(() => {
+        if(isSignInWithEmailLink(auth, window.location.href)){
+            let email = localStorage.getItem('email');
+            if(!email){
+                email = window.prompt('please provide your email');
+            }
+            signInWithEmailLink(auth, localStorage.getItem('email'), window.location.href)
+             .then(() => {
+                localStorage.removeItem('email');
+                navigate('/sellerDashboard');
+             }).catch((err) => {
+                console.log(err);
+                navigate('/login');
+             })
+        }else{
+            console.log("Enter Email and Sign In")
+        }
+    }, [userData, search, navigate]);
 
     const handleToggle = () => {
         setUseEmail(!useEmail);
@@ -141,9 +188,8 @@ const Login = () => {
                         <h5>{useEmail ? "Enter your Email-ID to continue" : "Enter your Phone Number to continue"}</h5>
                     </div>
                     <div >
-                        <Form noValidate validated={validated} onSubmit={handleSubmit}>
+                        <Form noValidate validated={validated} onSubmit={handleLogin}>
                             <div>
-
                                 {useEmail ?
                                     !emailEntered ? (
                                         <>
@@ -227,8 +273,9 @@ const Login = () => {
                                     {useEmail ? "Use Phone number" : "Use Email-ID"}
                                 </Link>
                             </div>
+                            {useEmail && <Link onClick={passwordlessSignIn}>sign in via link</Link>}
                             {useEmail ? emailEntered ? 
-                                (<Button onClick={handleSubmit} className="w-100">Submit</Button>) :
+                                (<Button onClick={handleLogin} className="w-100">Submit</Button>) :
                                 (<Button onClick={() => setEmailEntered(true)} className="w-100">Next</Button>)
                                 :
                                 (<Button
