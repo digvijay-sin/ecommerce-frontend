@@ -4,7 +4,7 @@ import "../../styles/Stepper.css";
 import Button from 'react-bootstrap/Button';
 import  EmailAndGst  from './EmailAndGst';
 import  PasswordCreation  from './PasswordCreation';
-import  OnboardingDashboard  from './OnboardingDashboard';
+import  OnboardingDashboard from './OnboardingDashboard';
 import * as formik from 'formik';
 import * as yup from 'yup';
 import { useFormikContext } from "formik";
@@ -12,7 +12,7 @@ import Form from 'react-bootstrap/Form';
 import { auth } from '../../utils/firebase.config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import toast, { Toaster } from 'react-hot-toast';
-
+import { TbRollercoaster } from 'react-icons/tb';
 
 
 const CustomStepper = () => {    
@@ -31,10 +31,15 @@ const CustomStepper = () => {
                 try {
                     await createUserWithEmailAndPassword(auth, emailID, createPassword);
                     toast.success("Successfully Registered")
-                    console.log(auth.currentUser);
+                    console.log("uid through auth", auth.currentUser.uid);
                     
                 } catch (error) {
                     console.log(error);
+                    if(error.code === "auth/email-already-in-use"){
+                        toast.error("Email already registered, please enter a different email")
+                    }else{
+                        toast.error("Error registering the user, check formatting issues.")
+                    }                    
                 }
             }
             setActiveStep(activeStep + 1);  
@@ -51,8 +56,7 @@ const CustomStepper = () => {
         yup.object({
             mobileNumber: yup.string().required("Mobile Number is required")
                 .transform((value) => value.replace(/^(\+[0-9]{1,3})\s?/, '')) 
-                .matches(/^[0-9]{8,15}$/, 'Invalid Mobile Number'),
-                
+                .matches(/^[0-9]{8,15}$/, 'Invalid Mobile Number'),                
             emailID: yup.string().required("Email is required").email("Invalid Email Format"),
             GSTIN: yup.string().required("GSTIN is required to sell products on this application"),
             terms: yup.bool().required().oneOf([true], 'Terms must be accepted'),

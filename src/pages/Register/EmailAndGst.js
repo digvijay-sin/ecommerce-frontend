@@ -42,9 +42,9 @@ const EmailAndGst = ({ setFieldValue, validateForm, setTouched, values, handleCh
                                         onChange={(phone) => setFieldValue("mobileNumber", phone)}
                                         onBlur={() => {
                                             setFieldTouched("mobileNumber", true);
-                                                validateField("mobileNumber")
-                                            }
-                                        } 
+                                            validateField("mobileNumber")
+                                        }
+                                        }
                                         inputStyle={{
                                             width: 500,
                                             boxShadow: 'none',
@@ -62,7 +62,7 @@ const EmailAndGst = ({ setFieldValue, validateForm, setTouched, values, handleCh
                                     />
                                 </Form.Group>
                                 <div className='send-otp'>
-                                    <a onClick={sendOtp} className={!dirty || !isValid ? "unclickable" :  ""} >Send OTP</a>
+                                    <a onClick={sendOtp} className={!dirty || !isValid ? "unclickable" : ""} >Send OTP</a>
                                 </div>
                             </div>
                             <span className='text-danger'>{errors.mobileNumber}</span>
@@ -98,6 +98,7 @@ const EmailAndGst = ({ setFieldValue, validateForm, setTouched, values, handleCh
                         <div className="d-flex">
                             <Form.Group as={Col} md="8" controlId="validationFormik02" className="d-flex flex-fill">
                                 <InputGroup hasValidation>
+
                                     <Form.Control
                                         type="text"
                                         name="emailID"
@@ -129,9 +130,9 @@ const EmailAndGst = ({ setFieldValue, validateForm, setTouched, values, handleCh
                                         name="GSTIN"
                                         value={values.GSTIN}
                                         onBlur={() => {
-                                                setFieldTouched("GSTIN", true);
-                                                validateField("GSTIN")
-                                            }
+                                            setFieldTouched("GSTIN", true);
+                                            validateField("GSTIN")
+                                        }
                                         }
                                         onChange={handleChange}
                                         feedback={errors.terms}
@@ -151,9 +152,9 @@ const EmailAndGst = ({ setFieldValue, validateForm, setTouched, values, handleCh
                             label="Agree to terms and conditions"
                             onChange={handleChange}
                             onBlur={() => {
-                                    setFieldTouched("terms", true);
-                                    validateField("terms")
-                                }
+                                setFieldTouched("terms", true);
+                                validateField("terms")
+                            }
                             }
                             checked={values.terms}
                             isInvalid={!!errors.terms}
@@ -168,4 +169,4 @@ const EmailAndGst = ({ setFieldValue, validateForm, setTouched, values, handleCh
     )
 }
 
-export default EmailAndGst ;
+export default EmailAndGst;

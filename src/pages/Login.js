@@ -54,27 +54,37 @@ const Login = () => {
             event.stopPropagation();
         }
         await signInWithEmailAndPassword(auth, emailID, password)
-        window.location.href= "/sellerDashboard";
+        // window.location.href= "/sellerDashboard";
+        navigate('/sellerDashboard');
         console.log("signed In")
         setValidated(true);
     };
 
     const passwordlessSignIn = async(event) => {
+
         // const form = event.currentTarget;
         // if(form.checkValidity() === false){
         //     event.preventDefault();
         //     event.stopPropagation();
         // }
-        await sendSignInLinkToEmail(auth, emailID, {
-            url : "http://localhost:3000/Login",
-            handleCodeInApp: true
-        }).then((result) => {
-            console.log(result.user)
-            localStorage.setItem('email', emailID);
-            setInfoMsg("We have sent you an email with a link to  sign in");
-        }).catch(err => {
-            alert(err);
-        });
+        
+        try {
+            await sendSignInLinkToEmail(auth, emailID, {
+                url : "http://localhost:3000/Login",
+                handleCodeInApp: true
+            }).then((result) => {
+                console.log(result.user)
+                localStorage.setItem('email', emailID);
+                setInfoMsg("We have sent you an email with a link to  sign in");
+            })
+        } catch (err) {
+            console.error("Error sending sign-in link:", err);
+            if (err.code === 'auth/user-not-found') {
+                toast.error("Email address not registered. Please register first.");
+            } else {
+                toast.error("Error sending sign-in link. Please try again.");
+            }
+        }
     }
 
     useEffect(() => {
@@ -83,6 +93,8 @@ const Login = () => {
             if(!email){
                 email = window.prompt('please provide your email');
             }
+
+            alert("Email in LocalStorage: ", localStorage.getItem('email'))
             signInWithEmailLink(auth, localStorage.getItem('email'), window.location.href)
              .then(() => {
                 localStorage.removeItem('email');
@@ -161,8 +173,6 @@ const Login = () => {
         }
     }
 
-
-
     // function onOTPVerify(){
     //     setLoading(true);
     //     window.confirmationResult.confirm(otp)
@@ -179,7 +189,7 @@ const Login = () => {
 
     return (
         <>
-            <div className='d-flex justify-content-center align-items-center min-vh-100"'>
+            <div className='d-flex justify-content-center align-items-center mt-5'>
                 <Toaster toastOptions={{ duration: 4000 }} />
 
                 <div className='m-3 w-50 w-md-50'>
@@ -289,9 +299,8 @@ const Login = () => {
                             }
                         </Form>
                     </div>
-
-
-                    <p>By continuing, you agree to Flipkart's <mark>Terms of Use</mark> and <mark>Privacy Policy</mark></p>
+                    <Link to ="/Signup">Dont't have an account? Signup here</Link>
+                    <p>By continuing, you agree to Our <mark>Terms of Use</mark> and <mark>Privacy Policy</mark></p>
                 </div >
             </div >
             <div id="recaptcha-container"></div>

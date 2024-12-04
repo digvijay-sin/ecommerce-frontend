@@ -6,6 +6,7 @@ import RegisterComp from './pages/Register/Register';
 import SellerDashboard from './components/SellerDashboard';
 import {auth}  from "./utils/firebase.config"
 import { useState, useEffect } from "react";
+import Signup from "./pages/Signup"
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         setUser(user);
     });
   })
+
   return (
     <Router>
         <NavbarComp/>
@@ -25,6 +27,7 @@ function App() {
           <Route path="/login" element={ user ? <Navigate to = "/sellerDashboard"/> : <Login />} />
           <Route path="/register" element={<RegisterComp />} />
           <Route path="/sellerDashboard" element={<SellerDashboard/>} />
+          <Route path="/Signup" element={<Signup/>} />
           {/* <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/checkout" element={<Checkout />} /> */}
         </Routes>
