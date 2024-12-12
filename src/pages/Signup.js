@@ -8,6 +8,7 @@ import * as yup from 'yup';
 import { auth } from "../utils/firebase.config"
 import toast, { Toaster } from "react-hot-toast";
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import {postUser} from '../APIs/User'
 
 const Signup = () => {
 
@@ -18,10 +19,11 @@ const Signup = () => {
         try {
             await createUserWithEmailAndPassword(auth, emailID, createPassword);
             toast.success("Successfully Signed up")
-            console.log(auth.currentUser);
+            console.log(auth.currentUser.uid);
+            postUser(auth.currentUser);
         } catch (error) {
             console.log(error);
-        }
+        }        
     }
 
     const schema = yup.object().shape({
@@ -82,11 +84,10 @@ const Signup = () => {
                                                     name="createPassword"
                                                     value={values.createPassword}
                                                     onChange={handleChange}
-
-                                                    onBlur={() => {
-                                                        setFieldTouched("createPassword", true);
-                                                        validateField("createPassword")
-                                                    }
+                                                        onBlur={() => {
+                                                            setFieldTouched("createPassword", true);
+                                                            validateField("createPassword")
+                                                        }
                                                     }
                                                     isInvalid={!!errors.createPassword}
                                                     isValid={touched.createPassword && !errors.createPassword}

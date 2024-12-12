@@ -5,10 +5,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import "../../styles/Stepper.css";
 
-
-
-const PasswordCreation = ({ setFieldValue, validateForm, setTouched, values, handleChange, handleBlur, touched, errors, setFieldTouched, validateField, isValid, dirty }) => {
-    
+const PasswordCreation = ({ setFieldValue, validateForm, setTouched, values, handleChange, handleBlur, touched, errors, setFieldTouched, validateField, isValid, dirty }) => {    
     
     const [validated, setValidated] = useState(false);
 
@@ -30,10 +27,10 @@ const PasswordCreation = ({ setFieldValue, validateForm, setTouched, values, han
                                         value={values.createPassword}
                                         onChange={handleChange}
                                         onBlur={() => {
-                                            setFieldTouched("createPassword", true);
-                                            validateField("createPassword")
+                                                setFieldTouched("createPassword", true);
+                                                validateField("createPassword")
+                                            }
                                         }
-                                        }s
                                         isValid={touched.createPassword && !errors.createPassword}
                                         placeholder="Enter Password"
                                         isInvalid={!!errors.createPassword}
