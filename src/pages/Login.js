@@ -3,7 +3,7 @@ import {useAuthState} from "react-firebase-hooks/auth";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import * as formik from 'formik';
 import * as yup from 'yup';
 import PhoneInput from 'react-phone-input-2'
